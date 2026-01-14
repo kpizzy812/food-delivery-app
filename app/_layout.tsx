@@ -7,6 +7,9 @@ import { useEffect } from 'react';
 import 'react-native-reanimated';
 
 import { useColorScheme } from '@/components/useColorScheme';
+import { CartProvider } from '@/context/CartContext';
+import { OrdersProvider } from '@/context/OrdersContext';
+import { FavoritesProvider } from '@/context/FavoritesContext';
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -49,11 +52,43 @@ function RootLayoutNav() {
   const colorScheme = useColorScheme();
 
   return (
-    <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-        <Stack.Screen name="modal" options={{ presentation: 'modal' }} />
-      </Stack>
-    </ThemeProvider>
+    <FavoritesProvider>
+      <OrdersProvider>
+        <CartProvider>
+          <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme}>
+            <Stack>
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen name="restaurant/[id]" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="checkout"
+                options={{
+                  headerShown: true,
+                  title: 'Оформление заказа',
+                  headerBackTitle: 'Корзина'
+                }}
+              />
+              <Stack.Screen name="success" options={{ headerShown: false, presentation: 'modal' }} />
+              <Stack.Screen
+                name="dish/[id]"
+                options={{
+                  presentation: 'modal',
+                  headerShown: true,
+                  title: 'Добавить в корзину',
+                  headerBackTitle: 'Назад'
+                }}
+              />
+              <Stack.Screen
+                name="profile"
+                options={{
+                  headerShown: true,
+                  title: 'Профиль',
+                  headerBackTitle: 'Назад'
+                }}
+              />
+            </Stack>
+          </ThemeProvider>
+        </CartProvider>
+      </OrdersProvider>
+    </FavoritesProvider>
   );
 }
